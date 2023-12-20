@@ -28,40 +28,73 @@ class Request:
         try:
             with psycopg2.connect(**db_config) as conn:
                 with conn.cursor() as cur:
-                    for team_stats in data['response']:
-                        team_id = team_stats['team']['id']
-                        match_id = querystring['fixture']
+                    if len(data['response']) == 0:
+                        query_Matches = "SELECT * FROM matches WHERE id = %s"
+                        cur.execute(query_Matches, (fixture,))
+                        match = cur.fetchone()
 
-                        stats_values = {
-                            'shots_on_goal': 0, 'shots_off_goal': 0, 'total_shots': 0, 'blocked_shots': 0,
-                            'shots_insidebox': 0, 'shots_outsidebox': 0, 'fouls': 0, 'corner_kicks': 0,
-                            'offsides': 0, 'ball_possession': '0%', 'yellow_cards': 0, 'red_cards': 0,
-                            'goalkeeper_saves': 0, 'total_passes': 0, 'passes_accurate': 0, 'passes_percentage': '0%'
-                        }
+                        for team in ['home', 'away']:
+                            team_id = match[3 if team == 'home' else 4]
+                            match_id = match[0]
 
-                        for stat in team_stats['statistics']:
-                            stat_name = stat['type'].lower().replace(' ', '_').replace('%', 'percentage')
-                            if stat['value'] is None:
-                                stats_values[stat_name] = 0
-                            else:
-                                stats_values[stat_name] = stat['value']
+                            stats_values = {
+                                'shots_on_goal': 0, 'shots_off_goal': 0, 'total_shots': 0, 'blocked_shots': 0,
+                                'shots_insidebox': 0, 'shots_outsidebox': 0, 'fouls': 0, 'corner_kicks': 0,
+                                'offsides': 0, 'ball_possession': '0%', 'yellow_cards': 0, 'red_cards': 0,
+                                'goalkeeper_saves': 0, 'total_passes': 0, 'passes_accurate': 0,
+                                'passes_percentage': '0%'
+                            }
 
-                        columns = ', '.join(stats_values.keys())
-                        placeholders = ', '.join(['%s'] * len(stats_values))
-                        query = f"INSERT INTO statistics (team_id, match_id, {columns}) VALUES (%s, %s, {placeholders})"
-                        values = [team_id, match_id] + list(stats_values.values())
+                            columns = ', '.join(stats_values.keys())
+                            placeholders = ', '.join(['%s'] * len(stats_values))
+                            query = f"INSERT INTO statistics (team_id, match_id, {columns}) VALUES (%s, %s, {placeholders})"
+                            values = [team_id, match_id] + list(stats_values.values())
 
-                        # Diagnostic check
-                        if len(values) != len(columns.split(',')) + 2:
-                            print(
-                                f"Mismatch in placeholders and values: {len(columns.split(',')) + 2} vs {len(values)}")
-                            continue
+                            # Diagnostic check
+                            if len(values) != len(columns.split(',')) + 2:
+                                print(
+                                    f"Mismatch in placeholders and values: {len(columns.split(',')) + 2} vs {len(values)}")
+                                continue
 
-                        print("Executing Query...")
-                        cur.execute(query, values)
+                            print("Executing Query...")
+                            cur.execute(query, values)
+                    else:
+                        for team_stats in data['response']:
+                            team_id = team_stats['team']['id']
+                            match_id = querystring['fixture']
+
+                            stats_values = {
+                                'shots_on_goal': 0, 'shots_off_goal': 0, 'total_shots': 0, 'blocked_shots': 0,
+                                'shots_insidebox': 0, 'shots_outsidebox': 0, 'fouls': 0, 'corner_kicks': 0,
+                                'offsides': 0, 'ball_possession': '0%', 'yellow_cards': 0, 'red_cards': 0,
+                                'goalkeeper_saves': 0, 'total_passes': 0, 'passes_accurate': 0,
+                                'passes_percentage': '0%'
+                            }
+
+                            for stat in team_stats['statistics']:
+                                stat_name = stat['type'].lower().replace(' ', '_').replace('%', 'percentage')
+                                if stat['value'] is None:
+                                    stats_values[stat_name] = 0
+                                else:
+                                    stats_values[stat_name] = stat['value']
+
+                            columns = ', '.join(stats_values.keys())
+                            placeholders = ', '.join(['%s'] * len(stats_values))
+                            query = f"INSERT INTO statistics (team_id, match_id, {columns}) VALUES (%s, %s, {placeholders})"
+                            values = [team_id, match_id] + list(stats_values.values())
+
+                            # Diagnostic check
+                            if len(values) != len(columns.split(',')) + 2:
+                                print(
+                                    f"Mismatch in placeholders and values: {len(columns.split(',')) + 2} vs {len(values)}")
+                                continue
+
+                            print("Executing Query...")
+                            cur.execute(query, values)
 
                     conn.commit()
                     print("Data committed to the database.")
+
 
         except psycopg2.DatabaseError as e:
             print(f"Database error: {e}")
