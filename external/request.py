@@ -64,7 +64,7 @@ class Request:
         except psycopg2.DatabaseError as e:
             print(f"Database error: {e}")
 
-    def obter_times(league_id, start_season, end_season):
+    def obter_times(self, league_id, start_season, end_season):
         url = "https://api-football-v1.p.rapidapi.com/v3/teams"
         headers = {
             "X-RapidAPI-Key": config.api_key,
@@ -95,39 +95,55 @@ class Request:
         cur.close()
         conn.close()
 
-    def obter_partida(league_id, start_season, end_season):
+    def obter_partida(self, league_id, start_season, end_season):
 
         url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
-    headers = {
-        "X-RapidAPI-Key": config.api_key,
-        "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
-    }
 
-    conn = psycopg2.connect(**db_config)
-    cur = conn.cursor()
-    for season in range(start_season, end_season + 1):
-        querystring = {"league": league_id, "season": str(season)}
-        response = requests.get(url, headers=headers, params=querystring)
-        data = response.json()
+        headers = {
+            "X-RapidAPI-Key": config.api_key,
+            "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+        }
 
-        if 'response' in data:
-            matches = data['response']
-            for match_info in matches:
-                match_data = match_info.get('fixture', {})
-                league_data = match_info.get('league', {})
-                team_data = match_info.get('teams', {})
-                team_home_data = team_data.get('home', {})
-                team_away_data = team_data.get('away', {})
-                match_id = match_data.get('id')
-                league_season = league_data.get('season')
-                league_round = league_data.get('round')
-                team_home_id = team_home_data.get('id')
-                team_away_id = team_away_data.get('id')
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+        for season in range(start_season, end_season + 1):
+            querystring = {"league": league_id, "season": str(season)}
+            response = requests.get(url, headers=headers, params=querystring)
+            data = response.json()
 
-                # Inserir somente se o registro não existir na tabela
-                query = "INSERT INTO matches (id, season, round, team_home_id, team_away_id) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING"
-                cur.execute(query, (match_id, season, league_round, team_home_id, team_away_id))
+            if 'response' in data:
+                matches = data['response']
+                for match_info in matches:
+                    match_data = match_info.get('fixture', {})
+                    league_data = match_info.get('league', {})
+                    team_data = match_info.get('teams', {})
+                    team_home_data = team_data.get('home', {})
+                    team_away_data = team_data.get('away', {})
+                    goals_data = match_info.get('goals', {})
+                    goals_home = goals_data.get('home')
+                    goals_away = goals_data.get('away')
+                    match_id = match_data.get('id')
+                    league_season = league_data.get('season')
+                    league_round = league_data.get('round')
+                    team_home_id = team_home_data.get('id')
+                    team_away_id = team_away_data.get('id')
+                    team_home_winner = team_home_data.get('winner')
+                    team_away_winner = team_away_data.get('winner')
+                    draw = False
 
-    conn.commit()
-    cur.close()
-    conn.close()
+                    if team_home_winner == None:
+                        team_home_winner = False
+                        team_away_winner = False
+                        draw = True
+
+                    # Inserir somente se o registro não existir na tabela
+                    query_matches = ("INSERT INTO matches (id, season, round, team_home_id, team_away_id,team_home_goals,team_away_goals,winner_home,winner_away, draw) "
+                                     "VALUES (%s, %s, %s, %s, %s,%s,%s,%s,%s,%s)"
+                                     "ON CONFLICT (id) DO NOTHING")
+                    cur.execute(query_matches, (match_id, league_season, league_round, team_home_id, team_away_id, goals_home, goals_away,team_home_winner,team_away_winner, draw))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+

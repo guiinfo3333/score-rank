@@ -1,8 +1,8 @@
 db_config = {
-    'dbname': 'score-rank',
+    'dbname': 'score_rank',
     'user': 'postgres',
-    'password': 'postgres',
+    'password': 'admin',
     'host': 'localhost'
 }
 
-api_key = ''
+api_key = "1480b65befmshf92b3dccec1d75dp169278jsn3f1afd570f1d"
