@@ -145,3 +145,17 @@ class Request:
         conn.commit()
         cur.close()
         conn.close()
+
+    def get_match_id(self, limit):
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+        query = ("select distinct m.id "
+                 "from matches m "
+                 "inner join statistics s "
+                 "on m.id != s.match_id "
+                 "LIMIT %s")
+        cur.execute(query, (limit,))
+        match_ids = [match[0] for match in cur.fetchall()]
+        cur.close()
+        conn.close()
+        return match_ids
