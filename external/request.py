@@ -32,17 +32,19 @@ class Request:
                         team_id = team_stats['team']['id']
                         match_id = querystring['fixture']
 
-                        stats_values = {stat: None for stat in [
-                            'shots_on_goal', 'shots_off_goal', 'total_shots', 'blocked_shots',
-                            'shots_insidebox', 'shots_outsidebox', 'fouls', 'corner_kicks',
-                            'offsides', 'ball_possession', 'yellow_cards', 'red_cards',
-                            'goalkeeper_saves', 'total_passes', 'passes_accurate', 'passes_percentage'
-                        ]}
+                        stats_values = {
+                            'shots_on_goal': 0, 'shots_off_goal': 0, 'total_shots': 0, 'blocked_shots': 0,
+                            'shots_insidebox': 0, 'shots_outsidebox': 0, 'fouls': 0, 'corner_kicks': 0,
+                            'offsides': 0, 'ball_possession': '0%', 'yellow_cards': 0, 'red_cards': 0,
+                            'goalkeeper_saves': 0, 'total_passes': 0, 'passes_accurate': 0, 'passes_percentage': '0%'
+                        }
 
                         for stat in team_stats['statistics']:
                             stat_name = stat['type'].lower().replace(' ', '_').replace('%', 'percentage')
-
-                            stats_values[stat_name] = stat['value']
+                            if stat['value'] is None:
+                                stats_values[stat_name] = 0
+                            else:
+                                stats_values[stat_name] = stat['value']
 
                         columns = ', '.join(stats_values.keys())
                         placeholders = ', '.join(['%s'] * len(stats_values))
