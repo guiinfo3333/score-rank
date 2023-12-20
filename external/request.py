@@ -145,5 +145,3 @@ class Request:
         conn.commit()
         cur.close()
         conn.close()
-
-
