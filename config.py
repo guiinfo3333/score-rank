@@ -5,4 +5,4 @@ db_config = {
     'host': 'localhost'
 }
 
-api_key = "36ce366a71msh5dc1cf146f89839p1ed009jsn9336ad6b7a6e"
+api_key = ""
