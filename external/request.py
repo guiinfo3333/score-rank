@@ -151,10 +151,10 @@ class Request:
     def get_match_id(self, limit):
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
-        query = ("select distinct m.id "
-                 "from matches m "
-                 "inner join statistics s "
-                 "on m.id != s.match_id "
+        query = ("SELECT m.id "
+                 "FROM matches m "
+                 "LEFT JOIN statistics s ON m.id = s.match_id "
+                 "WHERE s.match_id IS NULL "
                  "LIMIT %s")
         cur.execute(query, (limit,))
         match_ids = [match[0] for match in cur.fetchall()]

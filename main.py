@@ -4,7 +4,7 @@ if __name__ == '__main__':
     request = Request()
     # request.getStatistics("190160")
 
-    matches_without_stats = request.get_match_id(10)
+    matches_without_stats = request.get_match_id(4)
     for match_id in matches_without_stats:
         request.getStatistics(match_id)
 
