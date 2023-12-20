@@ -64,7 +64,7 @@ class Request:
         except psycopg2.DatabaseError as e:
             print(f"Database error: {e}")
 
-def obter_times(league_id, start_season, end_season):
+    def obter_times(league_id, start_season, end_season):
         url = "https://api-football-v1.p.rapidapi.com/v3/teams"
         headers = {
             "X-RapidAPI-Key": config.api_key,
@@ -95,11 +95,9 @@ def obter_times(league_id, start_season, end_season):
         cur.close()
         conn.close()
 
+    def obter_partida(league_id, start_season, end_season):
 
-
-
-def obter_partida(league_id, start_season, end_season):
-    url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+        url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
     headers = {
         "X-RapidAPI-Key": config.api_key,
         "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
