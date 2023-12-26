@@ -12,6 +12,7 @@ if __name__ == '__main__':
 
     # request.obter_times(71, 2015,2022)
     # request.obter_partida(71, 2015, 2022)
+    # request.get_results_2023(2023)
 
     print("=========================================== Bem-vindo ao Score Rank =====================================")
     print("======================================= o melhor programa de palpites do mundo =====================================")

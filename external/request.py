@@ -194,3 +194,48 @@ class Request:
         cur.close()
         conn.close()
         return match_ids
+
+    def get_results_2023(self, season):
+        url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+        headers = {
+            "X-RapidAPI-Key": config.api_key,
+            "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+        }
+
+        querystring = {"league": "71", "season": season}
+        response = requests.get(url, headers=headers, params=querystring)
+        data = response.json()
+        if 'response' not in data:
+            print("No response in data")
+            return []
+        matches = data['response']
+
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+
+        for matches_info in matches:
+            match_data = matches_info.get('fixture', {})
+            team_data = matches_info.get('teams', {})
+            team_home_data = team_data.get('home', {})
+            team_away_data = team_data.get('away', {})
+            match_id = match_data.get('id')
+            team_home_id = team_home_data.get('id')
+            team_away_id = team_away_data.get('id')
+            team_home_winner = team_home_data.get('winner')
+            team_away_winner = team_away_data.get('winner')
+            draw = False
+            if team_home_winner == None:
+                team_home_winner = False
+                team_away_winner = False
+                draw = True
+
+            query = ("INSERT INTO results2023 (match_id, team_home_id, team_away_id, winner_home, winner_away, draw) "
+                     "values (%s, %s, %s, %s, %s, %s)"
+                     "ON CONFLICT (id) DO NOTHING")
+            cur.execute(query, (match_id, team_home_id, team_away_id, team_home_winner, team_away_winner, draw))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
