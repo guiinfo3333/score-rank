@@ -1,4 +1,4 @@
-from models.results_2023 import Results
+from models.results import Results
 
 
 class ResultsController:

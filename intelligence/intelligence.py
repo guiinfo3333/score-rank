@@ -1,6 +1,7 @@
 from controller.matches_controllers import MatchesController
 from controller.statistics_controller import StatisticsController
 from models.statistics import Statistics
+from utils.constants import WINNER, LOSER, DRAW
 from utils.utils import Utils
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -55,16 +56,12 @@ class Intelligence():
             statistics_team_away = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_away_id)
 
             result = 0
-            EMPATE = 1
-            DERROTA = 0
-            VITORIA = 2
-
             if matche.draw:
-                result = EMPATE
+                result = DRAW
             elif matche.winner_home:
-                result = VITORIA
+                result = WINNER
             else:
-                result = DERROTA
+                result = LOSER
 
             self.generate_data(statistics_team_home, statistics_team_away, result)
 

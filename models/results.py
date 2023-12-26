@@ -1,15 +1,11 @@
 import psycopg2
 import config
+from database.connection import ConnectionDatabase
+from utils.constants import CONNECTION
+
 
 class Results:
     def __init__(self, id = 0, match_id = 0, team_home_id = 0, team_away_id = 0, winner_home = False, winner_away = False, draw = False):
-        self.db_config = config.db_config
-        self.conn_string = "dbname='{dbname}' user='{user}' password='{password}' host='{host}' port='{port}'".format(
-            **self.db_config)
-
-        self.conn = psycopg2.connect(self.conn_string)
-        self.cur = self.conn.cursor()
-
         self.id = id
         self.match_id = match_id
         self.team_home_id = team_home_id
@@ -19,28 +15,41 @@ class Results:
         self.draw = draw
 
     def get_all(self):
+        CONNECTION = ConnectionDatabase()
+        CONNECTION.connect()
         query = "SELECT * FROM results2023"
-        self.cur.execute(query)
-        return self.cur.fetchall()
+        CONNECTION.cur.execute(query)
+        list_matches = []
+
+        list = CONNECTION.cur.fetchall()
+        if len(list) > 0:
+            for element in list:
+                list_matches.append(self.create_results_object(element))
+
+        CONNECTION.desconnect()
+        return list_matches
 
     def get_results_by_id(self, team_home_id, team_away_id):
+        CONNECTION = ConnectionDatabase()
+        CONNECTION.connect()
         query = "SELECT * FROM results2023 WHERE (team_home_id = %s and team_away_id = %s)"
-        self.cur.execute(query, (team_home_id, team_away_id))
-        list = self.cur.fetchall()
+        CONNECTION.cur.execute(query, (team_home_id, team_away_id))
+        list = CONNECTION.cur.fetchall()
         list_matches = []
         if len(list) > 0:
             for element in list:
-                list_matches.append(self.create_matches_object(element))
-
+                list_matches.append(self.create_results_object(element))
+        CONNECTION.desconnect()
         return list_matches
 
-    def __del__(self):
-        self.cur.close()
-        self.conn.close()
 
     def create_results_object(self, result):
         return Results(
             result[0],
             result[1],
             result[2],
+            result[3],
+            result[4],
+            result[5],
+            result[6],
         )
