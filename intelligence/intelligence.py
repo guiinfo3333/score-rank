@@ -7,11 +7,7 @@ from sklearn.linear_model import LogisticRegression
 
 
 class Intelligence():
-    def __init__(self, matches, team_home_id, team_way_id):
-
-        # Nome da partida
-        self.matches = matches
-
+    def __init__(self, team_home_id, team_way_id):
         # Id do time da casa
         self.team_home_id = team_home_id
 
@@ -131,6 +127,7 @@ class Intelligence():
 
         previsoes =  self.modelo.predict([media_colunas])
         return previsoes
+
 
 
 

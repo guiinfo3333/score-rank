@@ -31,9 +31,11 @@ class Team:
         return listObjects
 
     def get_team_by_id(self, id):
-        query = "SELECT * FROM teams WHERE id = %s"
-        self.cur.execute(query, (id,))
-        return self.cur.fetchone()
+        query = "SELECT * FROM teams WHERE id = " +str(id)
+        self.cur.execute(query)
+        element = self.cur.fetchall()
+        for e in element:
+            return self.create_team_object(e)
 
     def update_team(self, id, name, code):
         query = "UPDATE teams SET name = %s, code = %s WHERE id = %s"

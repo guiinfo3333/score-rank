@@ -19,13 +19,16 @@ if __name__ == '__main__':
 
     print("Gerando probabilidades para todos os times que o Fortaleza jogou em casa para o próximo jogo")
 
-    teams_ways = TeamController().get_all()
+    team = TeamController()
+    teams_ways = team.get_all()
+    ID_TEAM_HOME = 126
+    team_home = team.find_by_id(ID_TEAM_HOME)
+
     for element in teams_ways:
-        ID_FORTALEZA = 154
         ID_AWAY = element.id
-        if element.id != ID_FORTALEZA:
-            print("Jogo Fortaleza x " + element.name)
-            inteligence = Intelligence(matches="Fortaleza x Vasco", team_home_id=ID_FORTALEZA, team_way_id=ID_AWAY)
+        if element.id != ID_TEAM_HOME:
+            print("Jogo "+ team_home.name + " x " + element.name)
+            inteligence = Intelligence(team_home_id=ID_TEAM_HOME, team_way_id=ID_AWAY)
             result_of_game_probability = inteligence.start()
 
             if result_of_game_probability[0] == 1:
