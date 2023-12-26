@@ -22,7 +22,7 @@ if __name__ == '__main__':
     teams_ways = TeamController().get_all()
     for element in teams_ways:
         ID_FORTALEZA = 154
-        ID_AWAY = 794
+        ID_AWAY = element.id
         if element.id != ID_FORTALEZA:
             print("Jogo Fortaleza x " + element.name)
             inteligence = Intelligence(matches="Fortaleza x Vasco", team_home_id=ID_FORTALEZA, team_way_id=ID_AWAY)
