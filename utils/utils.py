@@ -47,3 +47,15 @@ class Utils:
             return data_convertida
 
        raise TypeError("O argumento deve do tipo Statistics.")
+
+    def verify_unic_array(self, list):
+        result = True
+        number = 0
+
+        if len(list) > 0:
+            number = list[0]
+            for element in list:
+                if element != number:
+                    return False
+
+        return True

@@ -34,8 +34,14 @@ class Intelligence():
 
 
     def start(self):
-        self.pass1()
-        self.pass2()
+        result = self.pass1()
+        if result != None:
+            return result
+
+        result = self.pass2()
+        if result != None:
+            return result
+
         result = self.pass3()
         return result
 
@@ -44,6 +50,9 @@ class Intelligence():
     def pass1(self):
         macthes = MatchesController()
         list = macthes.get_by_all_per_team(self.team_home_id, self.team_way_id)
+
+        if len(list) == 0:
+            return "Não há dados de partidas entre estes dois times"
 
         for matche in list:
             statistics_team_home = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_home_id)
@@ -63,9 +72,11 @@ class Intelligence():
 
             self.generate_data(statistics_team_home, statistics_team_away, result)
 
+        self.fix_bug_is_only_one_game()
+
     # A máquina está sendo treinada
     def pass2(self):
-        self.training_machine()
+        return self.training_machine()
 
 
     # Prevendo o próximo jogo
@@ -83,6 +94,14 @@ class Intelligence():
         else:
             raise TypeError("O argumento deve do tipo Statistics.")
 
+    #Bug que acontece ao treinar a máquina quando só tem um jogo disponivel na base
+    def fix_bug_is_only_one_game(self):
+        if len(self.data) == 1:
+            self.data.append(self.data[0])
+            self.target.append(self.target[0])
+
+
+
     def training_machine(self):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
                 self.data,
@@ -90,6 +109,13 @@ class Intelligence():
                 test_size=0.2,
                 random_state=42
             )
+
+        if  len(self.y_train) == 1:
+            return self.y_train
+
+        if Utils().verify_unic_array(self.y_train):
+            return self.y_train
+            # do something else
 
         # Inicializar e treinar o modelo de regressão logística
         self.modelo = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=1000)

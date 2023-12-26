@@ -1,3 +1,4 @@
+from controller.team_controller import TeamController
 from external.request import Request
 from intelligence.intelligence import Intelligence
 
@@ -15,20 +16,29 @@ if __name__ == '__main__':
     print("=========================================== Bem-vindo ao Score Rank =====================================")
     print("======================================= o melhor programa de palpites do mundo =====================================")
 
-    ID_FORTALEZA = 154
-    ID_SANTOS = 128
 
-    # A inteligencia sempre analisa se o time que está jogando em CASA vai ganhar, perder ou empatar por aprendizado de máquina
-    # Obs = O algoritmo utilizado é o LogisticRegression
-    inteligence = Intelligence(matches="Fortaleza x Santos", team_home_id=ID_FORTALEZA, team_way_id=ID_SANTOS)
-    result_of_game_probability = inteligence.start()
+    print("Gerando probabilidades para todos os times que o Fortaleza jogou em casa para o próximo jogo")
 
-    if result_of_game_probability[0] == 1:
-        print(" A probalidade do time da casa empatar nesse jogo é alta. ")
-    elif result_of_game_probability[0] == 2:
-        print(" A probalidade do time da casa ter uma vitória nesse jogo é alta. ")
-    else:
-        print(" A probalidade do time da casa perder nesse jogo é alta. ")
+    teams_ways = TeamController().get_all()
+    for element in teams_ways:
+        ID_FORTALEZA = 154
+        ID_AWAY = 794
+        if element.id != ID_FORTALEZA:
+            print("Jogo Fortaleza x " + element.name)
+            inteligence = Intelligence(matches="Fortaleza x Vasco", team_home_id=ID_FORTALEZA, team_way_id=ID_AWAY)
+            result_of_game_probability = inteligence.start()
+
+            if result_of_game_probability[0] == 1:
+                print(" A probalidade do time da casa empatar nesse jogo é alta. ")
+            elif result_of_game_probability[0] == 2:
+                print(" A probalidade do time da casa ter uma vitória nesse jogo é alta. ")
+            else:
+                print(" A probalidade do time da casa perder nesse jogo é alta. ")
+            print("=================================================================")
+
+
+
+
 
 
 
