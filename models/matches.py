@@ -2,7 +2,7 @@ import psycopg2
 import config
 
 class Matches:
-    def __init__(self, id = 0, season = 0, round = "", team_home_id = 0, team_away_id = 0, team_home_goals = 0, winner_home = False, winner_away = False, draw = False):
+    def __init__(self, id = 0, season = 0, round = "", team_home_id = 0, team_away_id = 0, team_home_goals = 0, team_away_goals = 0, winner_home = False, winner_away = False, draw = False):
         self.db_config = config.db_config
         self.conn_string = "dbname='{dbname}' user='{user}' password='{password}' host='{host}' port='{port}'".format(**self.db_config)
         self.conn = psycopg2.connect(self.conn_string)
@@ -13,6 +13,7 @@ class Matches:
         self.team_home_id = team_home_id
         self.team_away_id = team_away_id
         self.team_home_goals = team_home_goals
+        self.team_away_goals = team_away_goals
         self.winner_home = winner_home
         self.winner_away = winner_away
         self.draw = draw
@@ -69,4 +70,5 @@ class Matches:
             result[6],
             result[7],
             result[8],
+            result[9],
         )

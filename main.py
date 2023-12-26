@@ -15,12 +15,12 @@ if __name__ == '__main__':
     print("=========================================== Bem-vindo ao Score Rank =====================================")
     print("======================================= o melhor programa de palpites do mundo =====================================")
 
-    ID_PALMEIRAS = 121
-    ID_FLAMENGO = 127
+    ID_FORTALEZA = 154
+    ID_SANTOS = 128
 
     # A inteligencia sempre analisa se o time que está jogando em CASA vai ganhar, perder ou empatar por aprendizado de máquina
     # Obs = O algoritmo utilizado é o LogisticRegression
-    inteligence = Intelligence(matches="Palmeiras x Flamengo", team_home_id=ID_PALMEIRAS, team_way_id= ID_FLAMENGO)
+    inteligence = Intelligence(matches="Fortaleza x Santos", team_home_id=ID_FORTALEZA, team_way_id=ID_SANTOS)
     result_of_game_probability = inteligence.start()
 
     if result_of_game_probability[0] == 1:
