@@ -6,6 +6,17 @@ from config import db_config
 
 
 class Request:
+
+    def start(self):
+        self.getStatistics("190160")
+
+        matches_without_stats = self.get_match_id(1)
+        for match_id in matches_without_stats:
+            self.getStatistics(match_id)
+
+        self.obter_times(71, 2015,2022)
+        self.obter_partida(71, 2015, 2022)
+        self.get_results_2023(2023)
     def getStatistics(self, fixture):
         url = "https://api-football-v1.p.rapidapi.com/v3/fixtures/statistics"
         headers = {

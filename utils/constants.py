@@ -19,7 +19,6 @@ class Constants:
 
     @staticmethod
     def verify_result_intelligent(number):
-        print("numero ae " + str(number))
         if int(number) == int(WINNER):
             return WINNER_HOME
         elif int(number) == int(LOSER):

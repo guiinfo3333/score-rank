@@ -15,3 +15,19 @@ class Predictions:
         CONNECTION.cur.execute(query, (results_id, predition))
         CONNECTION.conn.commit()
         CONNECTION.desconnect()
+
+    def get_percentage(self):
+        CONNECTION = ConnectionDatabase()
+        CONNECTION.connect()
+        query = "SELECT (COUNT(CASE WHEN predition = TRUE THEN 1 END)::FLOAT / COUNT(*)) * 100 as percentual_acerto, (COUNT(CASE WHEN predition = FALSE THEN 1 END)::FLOAT / COUNT(*)) * 100 as percentual_erro FROM predictions;"
+        CONNECTION.cur.execute(query)
+        list = CONNECTION.cur.fetchall()
+        return list
+
+    def get_prediction(self):
+        CONNECTION = ConnectionDatabase()
+        CONNECTION.connect()
+        query = "SELECT * FROM predictions;"
+        CONNECTION.cur.execute(query)
+        list = CONNECTION.cur.fetchall()
+        return list

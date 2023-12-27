@@ -1,30 +1,15 @@
-from controller.predictions import PredictionsController
-from external.request import Request
 from intelligence.intelligence import Intelligence
-from models.results import Results
-from utils.constants import Constants
 from controller.team_controller import TeamController
+from utils.utils import Utils
 
 if __name__ == '__main__':
-    request = Request()
-    # request.getStatistics("190160")
-
-    # matches_without_stats = request.get_match_id(1)
-    # for match_id in matches_without_stats:
-    #     request.getStatistics(match_id)
-
-    # request.obter_times(71, 2015,2022)
-    # request.obter_partida(71, 2015, 2022)
-    # request.get_results_2023(2023)
-
     print("=========================================== Bem-vindo ao Score Rank =====================================")
-    print(
-        "======================================= o melhor programa de palpites do mundo =====================================")
-
+    print("======================================= o melhor programa de palpites do mundo =====================================")
+    Utils.print_mad()
 
     while True:
-        print("Operações: \n0.Sair \n1.Listar times \n2.Gerar resultados ")
-        choice = input("Escolha uma opção (0/1/2): ")
+        print("Operações: \n0.Sair \n1.Listar times \n2.Gerar resultados \n3.Percentuais ")
+        choice = input("Escolha uma opção (0/1/2/3): ")
 
         if choice == '0':
             break
@@ -54,27 +39,13 @@ if __name__ == '__main__':
                     else:
                         print(" A probalidade do time da casa perder nesse jogo é alta. ")
                     print("=================================================================")
+        elif choice == '3':
+            inteligence = Intelligence()
+            inteligence.percentage_machine_2023()
         else:
             print("Opção inválida!")
 
 
 
-    # Testando se a máquina é boa mesmo
-    # results2023 = Results()
-    # list = results2023.get_all()
-    #
-    # for l in list:
-    #     if isinstance(l, Results):
-    #         print(l.team_home_id, l.team_away_id)
-    #         result_real = Constants.verify_result(l)
-    #         inteligence = Intelligence(team_home_id=l.team_home_id, team_way_id= l.team_away_id)
-    #         result_of_game_probability = inteligence.start()
-    #
-    #         if result_of_game_probability != "Não há dados de partidas entre estes dois times":
-    #             result_intelligence = Constants.verify_result_intelligent(result_of_game_probability[0])
-    #
-    #             correct_result = False
-    #             if result_real == result_intelligence:
-    #                 correct_result = True
-    #
-    #             prediction = PredictionsController().create(l.id, correct_result)
+
+

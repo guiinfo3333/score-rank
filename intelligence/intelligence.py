@@ -1,16 +1,19 @@
 from controller.matches_controllers import MatchesController
+from controller.predictions import PredictionsController
 from controller.statistics_controller import StatisticsController
 from models.matches import Matches
+from models.predictions import Predictions
+from models.results import Results
 from models.statistics import Statistics
 from utils import utils
-from utils.constants import WINNER, LOSER, DRAW
+from utils.constants import WINNER, LOSER, DRAW, Constants
 from utils.utils import Utils
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
 
 class Intelligence():
-    def __init__(self, team_home_id, team_way_id):
+    def __init__(self, team_home_id = 0, team_way_id = 0):
         # Id do time da casa
         self.team_home_id = team_home_id
 
@@ -203,6 +206,39 @@ class Intelligence():
         media_colunas = [sum(coluna) / len(coluna) for coluna in zip(*linhas_selecionadas)]
         previsoes = self.modelo.predict([media_colunas])
         return previsoes
+
+    def percentage_machine_2023(self):
+        list = Predictions().get_prediction()
+        if not len(list) > 0:
+            print("Gerando estatísticas, espere um pouco !!!")
+            results2023 = Results()
+            list = results2023.get_all()
+
+
+            for l in list:
+                if isinstance(l, Results):
+                    print(l.team_home_id, l.team_away_id)
+                    result_real = Constants.verify_result(l)
+                    inteligence = Intelligence(team_home_id=l.team_home_id, team_way_id=l.team_away_id)
+                    result_of_game_probability = inteligence.start()
+
+                    if result_of_game_probability != "Não há dados de partidas entre estes dois times":
+                        result_intelligence = Constants.verify_result_intelligent(result_of_game_probability[0])
+
+                        correct_result = False
+                        if result_real == result_intelligence:
+                            correct_result = True
+
+                        prediction = PredictionsController().create(l.id, correct_result)
+            list = Predictions().get_percentage()
+            print("percentual_acerto : ", list[0][0], "percentual de erro:", list[0][1])
+        else:
+            print("Já há registros ")
+            list = Predictions().get_percentage()
+            print("percentual_acerto : ", list[0][0], "percentual de erro:", list[0][1])
+
+
+
 
 
 
