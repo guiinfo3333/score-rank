@@ -21,7 +21,6 @@ if __name__ == '__main__':
     print(
         "======================================= o melhor programa de palpites do mundo =====================================")
 
-    print("Gerando probabilidades para todos os times que o Fortaleza jogou em casa para o próximo jogo")
 
     while True:
         print("Operações: \n0.Sair \n1.Listar times \n2.Gerar resultados ")

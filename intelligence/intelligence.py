@@ -1,6 +1,8 @@
 from controller.matches_controllers import MatchesController
 from controller.statistics_controller import StatisticsController
+from models.matches import Matches
 from models.statistics import Statistics
+from utils import utils
 from utils.constants import WINNER, LOSER, DRAW
 from utils.utils import Utils
 from sklearn.model_selection import train_test_split
@@ -29,6 +31,17 @@ class Intelligence():
 
         self.modelo = None
 
+    def start_personalize(self):
+        result = self.pass1_personalize()
+        if result != None:
+            return result
+
+        result = self.pass2()
+        if result != None:
+            return result
+
+        result = self.pass3_personalize()
+        return result
 
     def start(self):
         result = self.pass1()
@@ -43,7 +56,37 @@ class Intelligence():
         return result
 
 
-    # Pesquisando partidas entre Palmeiras e Flamengo onde o Palmeiras era o mandante
+    def pass1_personalize(self):
+        macthes = MatchesController()
+        list = macthes.get_by_all_per_team_personalize(self.team_home_id, self.team_way_id)
+
+        if len(list) == 0:
+            return "Não há dados de partidas entre estes dois times"
+
+        for matche in list:
+            statistics_team_home = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_home_id)
+            statistics_team_away = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_away_id)
+            result = 0
+            if self.team_home_id == matche.team_home_id:
+                if matche.draw:
+                    result = DRAW
+                elif matche.winner_home:
+                    result = WINNER
+                else:
+                    result = LOSER
+            else:
+                if matche.draw:
+                    result = DRAW
+                elif matche.winner_home:
+                    result = LOSER
+                else:
+                    result = WINNER
+
+            self.generate_data(statistics_team_home, statistics_team_away, result)
+
+        self.fix_bug_is_only_one_game()
+
+    # Pesquisando partidas
     def pass1(self):
         macthes = MatchesController()
         list = macthes.get_by_all_per_team(self.team_home_id, self.team_way_id)
@@ -75,6 +118,10 @@ class Intelligence():
     # Prevendo o próximo jogo
     def pass3(self):
         result_of_game_probability = self.predict_next_game_based_on_last_five_games()
+        return result_of_game_probability
+
+    def pass3_personalize(self):
+        result_of_game_probability = self.predict_next_game_based_on_last_five_personalize_games()
         return result_of_game_probability
 
 
@@ -123,6 +170,38 @@ class Intelligence():
         media_colunas = [sum(coluna) / len(coluna) for coluna in zip(*linhas_selecionadas)]
 
         previsoes =  self.modelo.predict([media_colunas])
+        return previsoes
+
+    # Tenta prever o próximo jogo gerando a média das estásticas dos ultimos 5 jogos como previsão
+    def predict_next_game_based_on_last_nine_games(self):
+        # Fazendo a média de cada estatísticas com os últimos 9 jogos ou menos se tiver poucos resultados
+
+        length = len(self.data)
+        linhas_selecionadas = self.data[(len(self.data) - length):len(self.data)]
+
+        # Calculando a média de cada coluna
+        media_colunas = [sum(coluna) / len(coluna) for coluna in zip(*linhas_selecionadas)]
+
+        #Sempre analiso o time da casa
+        # media_colunas[len(media_colunas) - 1] = 1
+        previsoes = self.modelo.predict([media_colunas])
+        return previsoes
+
+
+    def predict_next_game_based_on_last_five_personalize_games(self):
+        # Fazendo a média de cada estatísticas com os últimos 9 jogos ou menos se tiver poucos resultados
+        list = Matches().get_match_last_five(self.team_home_id)
+        data = []
+        for matche in list:
+            statistics_team_home = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_home_id)
+            statistics_team_away = StatisticsController().get_by_statistics_per_matche_id(matche.id, matche.team_away_id)
+            data.append(Utils().mounted_data_machine_learning(statistics_team_home, statistics_team_away))
+
+        length = len(data)
+        linhas_selecionadas = data[(len(data) - length):len(data)]
+
+        media_colunas = [sum(coluna) / len(coluna) for coluna in zip(*linhas_selecionadas)]
+        previsoes = self.modelo.predict([media_colunas])
         return previsoes
 
 
