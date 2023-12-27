@@ -1,5 +1,5 @@
 db_config = {
-    'dbname': 'score_rank',
+    'dbname': 'score-rank',
     'user': 'postgres',
     'password': 'postgres',
     'host': 'localhost',
