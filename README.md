@@ -31,6 +31,7 @@ Projeto desenvolvido para fins de estudos, é composta pelos seguintes integrant
 <ul>
     <li>Executar pip install scikit-learn no diretorio do projeto</li>
     <li>Executar pip install psycopg2 no diretorio do projeto</li>
+    <li>Altere seus dados do banco de dados no arquivo config.py</li>
     <li>Ter o banco de dados do score rank na máquina, ele se encontra na basta backup, restaure ele em seu postgres local usando psql</li>
     <li>Executar python main.py para rodar o projeto </li>
 </ul> 
