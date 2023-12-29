@@ -27,9 +27,11 @@ Projeto desenvolvido para fins de estudos, é composta pelos seguintes integrant
 ## 📅 Data da última atualização
     29/12/2023
 
-## 🎲 Como rodar?
-   1 - Executar pip install scikit-learn no diretorio do projeto
-   2 - Executar pip install psycopg2 no diretorio do projeto
-   3-  Ter o banco de dados do score rank na máquina, ele se encontra na basta backup, restaure ele em seu postgres local usando psql
-   4 - Executar python main.py para rodar o projeto
-   
+## 🏃 Como rodar?
+<ul>
+    <li>Executar pip install scikit-learn no diretorio do projeto</li>
+    <li>Executar pip install psycopg2 no diretorio do projeto</li>
+    <li>Ter o banco de dados do score rank na máquina, ele se encontra na basta backup, restaure ele em seu postgres local usando psql</li>
+    <li>Executar python main.py para rodar o projeto </li>
+</ul> 
+
