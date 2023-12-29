@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     print("=================================================================")
         elif choice == '3':
             inteligence = Intelligence()
-            inteligence.percentage_machine_2023()
+            inteligence.spercentage_machine_2023()
         else:
             print("Opção inválida!")
 
