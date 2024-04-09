@@ -13,7 +13,7 @@ from sklearn.linear_model import LogisticRegression
 
 
 class Intelligence():
-    def __init__(self, team_home_id = 0, team_way_id = 0):
+    def __init__(self, team_home_id = 0, team_way_id = 0, csv = None, name_team_home = None, name_team_away = None):
         # Id do time da casa
         self.team_home_id = team_home_id
 
@@ -33,6 +33,9 @@ class Intelligence():
         self.y_test = []
 
         self.modelo = None
+        self.csv = csv
+        self.team_home_name = name_team_home
+        self.team_home_away = name_team_away
 
     def start_personalize(self):
         result = self.pass1_personalize()
@@ -112,6 +115,14 @@ class Intelligence():
             self.generate_data(statistics_team_home, statistics_team_away, result)
 
         self.fix_bug_is_only_one_game()
+        self.generate_csv()
+
+    def generate_csv(self):
+        count = 0
+        for object in self.data:
+            self.csv.add_dados_csv([self.team_home_name] + [self.team_home_away] + object + [self.target[count]])
+            count+=1
+
 
     # A máquina está sendo treinada
     def pass2(self):

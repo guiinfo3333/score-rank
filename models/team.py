@@ -30,6 +30,17 @@ class Team:
                 listObjects.append(self.create_team_object(element))
         return listObjects
 
+    def get_all_teams_personalize(self):
+        query = "SELECT * FROM teams where id = 121"
+        self.cur.execute(query)
+        listObjects = []
+        list = self.cur.fetchall()
+
+        if len(list) > 0:
+            for element in list:
+                listObjects.append(self.create_team_object(element))
+        return listObjects
+
     def get_team_by_id(self, id):
         query = "SELECT * FROM teams WHERE id = " +str(id)
         self.cur.execute(query)

@@ -36,3 +36,15 @@ Projeto desenvolvido para fins de estudos, é composta pelos seguintes integrant
     <li>Executar python main.py para rodar o projeto </li>
 </ul> 
 
+
+## Passos para aprendizagem de máquina
+
+Primeiro passo é o tratamento dos dados, por exemplo uma base dados com idade negativa, você que tratar isso, coisas q vc pode fazer
+ - apagar o registro
+ - substituir o dado por um valor válido
+ - colocar como sendo a média dos outros atributos pode ser uma solução viável para este problema
+
+
+## Link Codelab
+
+https://colab.research.google.com/drive/1gEFE0Hvg4mvap78AUsgd-A80gDcKqTjq#scrollTo=BarTN4PJhgfW
