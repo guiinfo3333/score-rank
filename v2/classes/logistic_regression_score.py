@@ -1,29 +1,43 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
 from yellowbrick.classifier import ConfusionMatrix
+from v2.classes.generic_algorithm import GenericAlgorithm
 
-class LogisticRegressionScore:
-    def __init__(self, X_base_time, Y_base_time, X_base_test, Y_base_test):
-        self.X_base_time = X_base_time
-        self.Y_base_time = Y_base_time
-        self.X_base_test = X_base_test
-        self.Y_base_test = Y_base_test
-        self.log =None
-        self.running_logistic_regression()
+class LogisticRegressionScore(GenericAlgorithm):
+    def __init__(self, X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation):
+        super().__init__(X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation)
+        self.running()
+        self.cross_validation()
         self.generate_matrix_confusion()
 
-    def running_logistic_regression(self):
-        self.log = LogisticRegression(random_state=1)
-        self.log.fit(self.X_base_time, self.Y_base_time)
-        predicts = self.log.predict(self.X_base_test)
+    def running(self):
+        self.alghoritm = LogisticRegression(random_state=1)
+        self.alghoritm.fit(self.X_base_time, self.Y_base_time)
+        predicts = self.alghoritm.predict(self.X_base_test)
         percentage_predict = accuracy_score(self.Y_base_test, predicts)
         print("A porcentagem da regressão logística de acerto foi", percentage_predict)
 
 
     def predict(self, array):
-        return self.log.predict([array])
+        return self.alghoritm.predict([array])
 
     def generate_matrix_confusion(self):
-        cm = ConfusionMatrix(self.log)
+        cm = ConfusionMatrix(self.alghoritm)
         cm.fit(self.X_base_time, self.Y_base_time)
         cm.score(self.X_base_test, self.Y_base_test)
+
+    def cross_validation(self):
+        print("Com cross-validation ==========")
+        params = {'tol': [0.0001, 0.00001, 0.000001],
+                      'C': [1.0, 1.5, 2.0],
+                      'solver': ['lbfgs', 'sag', 'saga']}
+
+        grid_search = GridSearchCV(estimator=LogisticRegression(), param_grid=params)
+        grid_search.fit(self.X_base_time_cross_validation, self.Y_base_time_cross_validation)
+        melhores_parametros = grid_search.best_params_
+        melhor_resultado = grid_search.best_score_
+        print(melhores_parametros)
+        print(melhor_resultado)
+
+

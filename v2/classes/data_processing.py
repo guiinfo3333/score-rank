@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
@@ -13,7 +14,10 @@ class DataProcessing:
         self.Y_base_training = None
         self.X_base_test = None
         self.Y_base_test = None
+        self.X_base_time_cross_validation = None
+        self.Y_base_time_cross_validation = None
         self.execute_tranform_data()
+        self.cross_validation()
 
     def execute_tranform_data(self):
         self.transform_data()
@@ -22,6 +26,13 @@ class DataProcessing:
         self.scalling_between_elements()
         self.running_one_hot_encoded()
         self.divide_base_test_in_training()
+
+    # A validacao cruzada é uma forma de melhorar a perfomace do algoritmo, ela nao divive em  teste em treinamento, ela faz de uma
+    # forma que todos os dados são usados como conjunto de teste e treinamento, separando em grupos.
+    def cross_validation(self):
+        self.X_base_time_cross_validation = np.concatenate((self.X_base_training, self.X_base_test), axis=0)
+        self.Y_base_time_cross_validation = np.concatenate((self.Y_base_training, self.Y_base_test),  axis=0)
+
 
     def divide_base_test_in_training(self):
         self.X_base_training, self.X_base_test, self.Y_base_training, self.Y_base_test = train_test_split(self.X_base_time, self.Y_base_time, test_size=0.25, random_state=0)
