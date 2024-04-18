@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -14,6 +15,9 @@ from v2.classes.naves_bayes import NavesBayes
 from v2.classes.neural_networks import NeuralNetwork
 from v2.classes.random_forest import RandomForest
 from v2.classes.svm import Svm
+from scipy.stats import shapiro
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import MultiComparison
 
 if __name__ == '__main__':
     base_time = pd.read_csv('../csvs/Palmeiras.csv')
@@ -84,3 +88,68 @@ if __name__ == '__main__':
 
     print("Coeficiente de Variacão ===")
     print((resultados.std() / resultados.mean()) * 100)
+
+
+    #Avaliacção de Algoritmos de Classificação
+    #alpha é a probabilidade de rejeitar  a hipotese nula que  é de 5%
+    alpha = 0.05
+
+    # a lib shapior testa as hipoteses verificando se cada uma das alternativas está na distribuicao normal,
+    #se o segundo parametro for menor que 0.05 quer dizer que não segue uma distribuição normal
+    print(shapiro(resultados_arvore), shapiro(resultados_random_forest), shapiro(resultados_knn), shapiro(
+        resultados_logistica), shapiro(resultados_svm), shapiro(resultados_rede_neural))
+
+
+
+    #Teste de Hipotese com Anova e Turkey, servem para comparar estatisticamente se um algoritmo é melhor que  o outro
+    _, p = f_oneway(resultados_arvore, resultados_random_forest, resultados_knn, resultados_logistica, resultados_svm,
+                    resultados_rede_neural)
+
+    alpha = 0.05
+    if p <= alpha:
+        print('Hipótese nula rejeitada. Dados são diferentes')
+    else:
+        print('Hipótese alternativa rejeitada. Resultados são iguais')
+
+    resultados_algoritmos = {'accuracy': np.concatenate(
+        [resultados_arvore, resultados_random_forest, resultados_knn, resultados_logistica, resultados_svm,
+         resultados_rede_neural]),
+                             'algoritmo': ['arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore',
+                                           'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore',
+                                           'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore',
+                                           'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore', 'arvore',
+                                           'arvore', 'arvore',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest', 'random_forest', 'random_forest',
+                                           'random_forest', 'random_forest',
+                                           'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn',
+                                           'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn',
+                                           'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn', 'knn',
+                                           'logistica', 'logistica', 'logistica', 'logistica', 'logistica', 'logistica',
+                                           'logistica', 'logistica', 'logistica', 'logistica', 'logistica', 'logistica',
+                                           'logistica', 'logistica', 'logistica', 'logistica', 'logistica', 'logistica',
+                                           'logistica', 'logistica', 'logistica', 'logistica', 'logistica', 'logistica',
+                                           'logistica', 'logistica', 'logistica', 'logistica', 'logistica', 'logistica',
+                                           'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm',
+                                           'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm',
+                                           'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm', 'svm',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural',
+                                           'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural', 'rede_neural']}
+    resultados_df = pd.DataFrame(resultados_algoritmos)
+    print(resultados_df)
+
+    compara_algoritmos = MultiComparison(resultados_df['accuracy'], resultados_df['algoritmo'])
+    teste_estatistico = compara_algoritmos.tukeyhsd()
+    print(teste_estatistico)
+    print(resultados.mean())
+    print(teste_estatistico.plot_simultaneous())
+

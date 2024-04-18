@@ -8,10 +8,10 @@ class NeuralNetwork(GenericAlgorithm):
     def __init__(self, X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation):
         super().__init__(X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation)
         self.running()
-        self.cross_validation()
+        self.cross_validation_with_grid_search()
         self.generate_matrix_confusion()
 
-    def cross_validation(self):
+    def cross_validation_with_grid_search(self):
         print("Com cross-validation ==========")
         params = {'activation': ['relu', 'logistic', 'tahn'],
                       'solver': ['adam', 'sgd'],

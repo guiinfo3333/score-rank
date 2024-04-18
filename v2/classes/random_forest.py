@@ -8,7 +8,7 @@ class RandomForest(GenericAlgorithm):
     def __init__(self, X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation):
         super().__init__(X_base_time, Y_base_time, X_base_test, Y_base_test, X_base_time_cross_validation, Y_base_time_cross_validation)
         self.running()
-        self.cross_validation()
+        self.cross_validation_with_grid_search()
         self.generate_matrix_confusion()
 
     def running(self):
@@ -19,7 +19,7 @@ class RandomForest(GenericAlgorithm):
         percentage_predict = accuracy_score(self.Y_base_test, predicts)
         print("A porcentagem florestas randômicas de acerto foi", percentage_predict)
 
-    def cross_validation(self):
+    def cross_validation_with_grid_search(self):
         print("Com cross-validation ==========")
         params = {'criterion': ['gini', 'entropy'],
                       'n_estimators': [10, 40, 100, 150, 5],
