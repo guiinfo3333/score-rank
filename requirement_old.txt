@@ -1,0 +1,3 @@
+spacy==3.5.0
+pt_core_news_sm
+selenium==4.14.0
